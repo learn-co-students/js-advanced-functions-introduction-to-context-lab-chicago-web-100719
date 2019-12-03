@@ -1,5 +1,5 @@
 // Your code here
-function createEmployeeRecord(employeeInfo){
+const createEmployeeRecord = employeeInfo =>{
     return {
         firstName: employeeInfo[0],
         familyName: employeeInfo[1],
@@ -10,11 +10,11 @@ function createEmployeeRecord(employeeInfo){
     }
 }
 
-function createEmployeeRecords(employees){
+const createEmployeeRecords = employees => {
     return employees.map(employee => createEmployeeRecord(employee))
 }
 
-function createTimeInEvent(employee, stamp){
+const createTimeInEvent = (employee, stamp)=>{
     let [date, hour] = stamp.split(" ")
 
     employee.timeInEvents.push({
@@ -25,7 +25,7 @@ function createTimeInEvent(employee, stamp){
     return employee
 }
 
-function createTimeOutEvent(employee, stamp){
+const createTimeOutEvent = (employee, stamp)=>{
     let [date, hour] = stamp.split(" ")
 
     employee.timeOutEvents.push({
@@ -36,8 +36,28 @@ function createTimeOutEvent(employee, stamp){
     return employee
 }
 
-function hoursWorkedOnDate(employee,date){
+const hoursWorkedOnDate = (employee,date)=>{
     let inEvent = employee.timeInEvents.find(event => event.date === date)
     let outEvent = employee.timeOutEvents.find(event => event.date === date)
-    return (outEvent - inEvent) / 100
+    return (outEvent.hour - inEvent.hour) / 100
 }
+
+const wagesEarnedOnDate = (employee, date)=>{
+    const hours = hoursWorkedOnDate(employee, date)
+    return hours * employee.payPerHour
+}
+
+const allWagesFor = employee => {
+    const dates = employee.timeInEvents.map(event => event.date)
+    let wages = dates.reduce(function(memo, date){
+        return memo + wagesEarnedOnDate(employee,date)}, 0)
+    return wages
+}
+
+const calculatePayroll = employees =>{
+    return employees.reduce(function(memo,record){
+        return memo + allWagesFor(record)
+    }, 0)
+}
+
+const findEmployeeByFirstName = (array,firstName) => array.find(employee => employee.firstName === firstName)
